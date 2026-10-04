@@ -68,9 +68,9 @@ export const DOMAINS: Domain[] = [
     items: [
       {
         id: "gob-1",
-        title: "Delegado de Protección de Datos (DPO) designado",
+        title: "Alcance y contexto del SGSI definidos",
         detail:
-          "Nombramiento formal y comunicado, con independencia funcional según Ley 21.719.",
+          "Partes interesadas, procesos, sedes, interfaces y límites documentados conforme a las cláusulas 4.1–4.3.",
         severity: "GRAVE",
       },
       {
@@ -88,15 +88,15 @@ export const DOMAINS: Domain[] = [
       },
       {
         id: "gob-4",
-        title: "Registro de actividades de tratamiento",
+        title: "Objetivos de seguridad medibles",
         detail:
-          "Inventario de bases de datos personales, finalidades, bases de licitud y plazos de conservación.",
+          "Objetivos alineados al negocio, con responsables, métricas, recursos y fechas conforme a la cláusula 6.2.",
         severity: "GRAVE",
       },
       {
         id: "gob-5",
-        title: "Programa de capacitación y concientización",
-        detail: "Plan anual con evidencia de asistencia y evaluación de eficacia.",
+        title: "Auditoría interna y revisión por la dirección",
+        detail: "Programa de auditoría, resultados, decisiones y acciones de mejora conforme a las cláusulas 9.2 y 9.3.",
         severity: "LEVE",
       },
     ],
@@ -138,8 +138,8 @@ export const DOMAINS: Domain[] = [
       },
       {
         id: "tec-6",
-        title: "Evaluación de impacto en protección de datos (EIPD)",
-        detail: "Aplicada a tratamientos de alto riesgo antes de su puesta en producción.",
+        title: "Inventario y clasificación de activos de información",
+        detail: "Propietarios, clasificación, etiquetado y reglas de manejo alineadas con controles A.5.9–A.5.13.",
         severity: "LEVE",
       },
     ],
@@ -158,8 +158,8 @@ export const DOMAINS: Domain[] = [
       },
       {
         id: "inc-2",
-        title: "Notificación a titulares y a la Agencia de Protección de Datos",
-        detail: "Procedimiento de comunicación de brechas conforme a Ley 21.719.",
+        title: "Segunda notificación e informe final a la ANCI",
+        detail: "Flujo documentado para completar las etapas posteriores al alerta temprana y conservar evidencia.",
         severity: "GRAVE",
       },
       {
@@ -189,8 +189,8 @@ export const DOMAINS: Domain[] = [
       },
       {
         id: "pro-2",
-        title: "Contratos de encargo de tratamiento vigentes",
-        detail: "Instrucciones documentadas y límites de finalidad con cada encargado.",
+        title: "Acuerdos de seguridad con proveedores vigentes",
+        detail: "Requisitos de seguridad, acceso, notificación y término del servicio según controles A.5.19–A.5.22.",
         severity: "GRAVE",
       },
       {
@@ -201,8 +201,8 @@ export const DOMAINS: Domain[] = [
       },
       {
         id: "pro-4",
-        title: "Control de transferencias internacionales de datos",
-        detail: "Garantías adecuadas y registro de flujos transfronterizos.",
+        title: "Seguridad de servicios cloud y cadena TIC",
+        detail: "Adquisición, uso, cambios y salida de servicios cloud, más control de la cadena de suministro TIC.",
         severity: "GRAVISIMA",
       },
     ],
