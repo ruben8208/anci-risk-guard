@@ -7,6 +7,7 @@ export interface ChecklistItem {
   title: string;
   detail: string;
   severity: Severity;
+  reference?: string;
 }
 
 export interface Domain {
@@ -18,28 +19,25 @@ export interface Domain {
 
 export const ENTITIES: Record<
   EntityType,
-  { label: string; short: string; description: string; capPercent: number }
+  { label: string; short: string; description: string }
 > = {
   OIV: {
     label: "Operador de Importancia Vital (OIV)",
     short: "OIV",
     description:
-      "Nivel de exigencia crítico: deberes reforzados de SGSI, reporte continuo y las multas más severas del marco ANCI.",
-    capPercent: 4,
+      "Proveedor calificado formalmente por la ANCI, sujeto a obligaciones reforzadas y sanciones duplicadas.",
   },
   SE: {
     label: "Prestador de Servicios Esenciales (SE)",
     short: "Servicios Esenciales",
     description:
-      "Obligaciones prioritarias de notificación temprana, continuidad operacional y gestión de incidentes significativos.",
-    capPercent: 2,
+      "Institución del catálogo legal, obligada a prevenir, resolver y reportar incidentes significativos.",
   },
   GENERAL: {
-    label: "Entidad General / Común",
-    short: "Régimen General",
+    label: "Evaluación ISO/IEC 27001",
+    short: "Solo ISO 27001",
     description:
-      "Sujeto obligado bajo régimen estándar de la Ley 21.719, con deberes de tratamiento lícito y seguridad de datos.",
-    capPercent: 2,
+      "Diagnóstico voluntario del SGSI para organizaciones no calificadas como SE u OIV; sin cálculo sancionatorio ANCI.",
   },
 };
 
@@ -52,8 +50,8 @@ export const SEVERITY_LABEL: Record<Severity, string> = {
 /** Topes referenciales en UTM por severidad y clasificación del sujeto obligado. */
 export const FINE_MATRIX: Record<EntityType, Record<Severity, number>> = {
   OIV: { LEVE: 5000, GRAVE: 10000, GRAVISIMA: 40000 },
-  SE: { LEVE: 3000, GRAVE: 10000, GRAVISIMA: 20000 },
-  GENERAL: { LEVE: 2000, GRAVE: 5000, GRAVISIMA: 10000 },
+  SE: { LEVE: 5000, GRAVE: 10000, GRAVISIMA: 20000 },
+  GENERAL: { LEVE: 0, GRAVE: 0, GRAVISIMA: 0 },
 };
 
 export const SEVERITY_WEIGHT: Record<Severity, number> = {
@@ -70,9 +68,9 @@ export const DOMAINS: Domain[] = [
     items: [
       {
         id: "gob-1",
-        title: "Delegado de Protección de Datos (DPO) designado",
+        title: "Alcance y contexto del SGSI definidos",
         detail:
-          "Nombramiento formal y comunicado, con independencia funcional según Ley 21.719.",
+          "Partes interesadas, procesos, sedes, interfaces y límites documentados conforme a las cláusulas 4.1–4.3.",
         severity: "GRAVE",
       },
       {
@@ -90,15 +88,15 @@ export const DOMAINS: Domain[] = [
       },
       {
         id: "gob-4",
-        title: "Registro de actividades de tratamiento",
+        title: "Objetivos de seguridad medibles",
         detail:
-          "Inventario de bases de datos personales, finalidades, bases de licitud y plazos de conservación.",
+          "Objetivos alineados al negocio, con responsables, métricas, recursos y fechas conforme a la cláusula 6.2.",
         severity: "GRAVE",
       },
       {
         id: "gob-5",
-        title: "Programa de capacitación y concientización",
-        detail: "Plan anual con evidencia de asistencia y evaluación de eficacia.",
+        title: "Auditoría interna y revisión por la dirección",
+        detail: "Programa de auditoría, resultados, decisiones y acciones de mejora conforme a las cláusulas 9.2 y 9.3.",
         severity: "LEVE",
       },
     ],
@@ -140,8 +138,8 @@ export const DOMAINS: Domain[] = [
       },
       {
         id: "tec-6",
-        title: "Evaluación de impacto en protección de datos (EIPD)",
-        detail: "Aplicada a tratamientos de alto riesgo antes de su puesta en producción.",
+        title: "Inventario y clasificación de activos de información",
+        detail: "Propietarios, clasificación, etiquetado y reglas de manejo alineadas con controles A.5.9–A.5.13.",
         severity: "LEVE",
       },
     ],
@@ -160,8 +158,8 @@ export const DOMAINS: Domain[] = [
       },
       {
         id: "inc-2",
-        title: "Notificación a titulares y a la Agencia de Protección de Datos",
-        detail: "Procedimiento de comunicación de brechas conforme a Ley 21.719.",
+        title: "Segunda notificación e informe final a la ANCI",
+        detail: "Flujo documentado para completar las etapas posteriores al alerta temprana y conservar evidencia.",
         severity: "GRAVE",
       },
       {
@@ -191,8 +189,8 @@ export const DOMAINS: Domain[] = [
       },
       {
         id: "pro-2",
-        title: "Contratos de encargo de tratamiento vigentes",
-        detail: "Instrucciones documentadas y límites de finalidad con cada encargado.",
+        title: "Acuerdos de seguridad con proveedores vigentes",
+        detail: "Requisitos de seguridad, acceso, notificación y término del servicio según controles A.5.19–A.5.22.",
         severity: "GRAVE",
       },
       {
@@ -203,8 +201,8 @@ export const DOMAINS: Domain[] = [
       },
       {
         id: "pro-4",
-        title: "Control de transferencias internacionales de datos",
-        detail: "Garantías adecuadas y registro de flujos transfronterizos.",
+        title: "Seguridad de servicios cloud y cadena TIC",
+        detail: "Adquisición, uso, cambios y salida de servicios cloud, más control de la cadena de suministro TIC.",
         severity: "GRAVISIMA",
       },
     ],
@@ -272,8 +270,8 @@ export function computeAssessment(
   answers: Record<string, Status>,
   entity: EntityType,
   utmValue: number,
-  annualRevenueCLP: number | null,
-  repeatOffender: boolean,
+  _annualRevenueCLP: number | null,
+  _repeatOffender: boolean,
 ): Assessment {
   let weighted = 0;
   let weightTotal = 0;
@@ -308,17 +306,12 @@ export function computeAssessment(
     ),
     0,
   );
-  fineUTM = Math.min(fineUTM, severityCap) * (repeatOffender ? 2 : 1);
+  fineUTM = Math.min(fineUTM, severityCap);
   fineUTM = Math.round(fineUTM);
 
   let fineCLP = fineUTM * utmValue;
-  const capPercent = ENTITIES[entity].capPercent * (repeatOffender ? 2 : 1);
-  const revenueCapCLP = annualRevenueCLP ? (annualRevenueCLP * capPercent) / 100 : null;
-  let cappedByRevenue = false;
-  if (revenueCapCLP !== null && revenueCapCLP < fineCLP) {
-    fineCLP = revenueCapCLP;
-    cappedByRevenue = true;
-  }
+  const revenueCapCLP = null;
+  const cappedByRevenue = false;
 
   const compliancePercent = weightTotal ? (weighted / weightTotal) * 100 : 0;
   const level =

@@ -14,8 +14,6 @@ import {
   AlertTriangle,
   CheckCircle2,
   Clock,
-  Mail,
-  Phone,
   MapPin,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -24,7 +22,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import { Progress } from "@/components/ui/progress";
 import {
   Accordion,
@@ -58,16 +55,16 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       {
-        title: "Diagnóstico ANCI y Ley 21.719 | MD Solutions Security",
+        title: "Pre Auditoría ISO 27001 y Ley 21.663 | M:D",
       },
       {
         name: "description",
         content:
-          "Autodiagnóstico de cumplimiento ANCI y Ley 21.719: mida su madurez, detecte brechas y calcule su exposición a multas en UTM y CLP.",
+          "Pre auditoría de ISO 27001 y Ley 21.663: mida su madurez, detecte brechas y revise su exposición a sanciones ANCI.",
       },
       {
         property: "og:title",
-        content: "Diagnóstico ANCI y Ley 21.719 | MD Solutions Security",
+        content: "Pre Auditoría ISO 27001 y Ley 21.663 | M:D",
       },
       {
         property: "og:description",
@@ -97,7 +94,7 @@ const SERVICES = [
   {
     icon: Radar,
     title: "Auditoría de Brecha (Gap Analysis)",
-    text: "Levantamiento técnico y legal contra la Ley 21.663 y 21.719, con hoja de ruta priorizada por riesgo sancionatorio.",
+    text: "Levantamiento contra Ley 21.663 e ISO/IEC 27001:2022, con hallazgos y hoja de ruta priorizada por riesgo.",
   },
   {
     icon: ShieldCheck,
@@ -119,16 +116,12 @@ const SERVICES = [
 function Index() {
   const [entity, setEntity] = useState<EntityType>("SE");
   const [utmValue, setUtmValue] = useState(67000);
-  const [revenue, setRevenue] = useState<string>("");
-  const [repeat, setRepeat] = useState(false);
   const [answers, setAnswers] = useState<Record<string, Status>>({});
   const [reportOpen, setReportOpen] = useState(false);
 
-  const revenueCLP = revenue ? Number(revenue.replace(/\D/g, "")) : 0;
-
   const assessment = useMemo(
-    () => computeAssessment(answers, entity, utmValue, revenueCLP || null, repeat),
-    [answers, entity, utmValue, revenueCLP, repeat],
+    () => computeAssessment(answers, entity, utmValue, null, false),
+    [answers, entity, utmValue],
   );
 
   const answered = ALL_ITEMS.filter((i) => answers[i.id]).length;
@@ -138,19 +131,18 @@ function Index() {
 
   const reset = () => {
     setAnswers({});
-    setRepeat(false);
-    setRevenue("");
     toast.info("Evaluación reiniciada");
   };
 
   const loadSample = () => {
     setAnswers({ ...SAMPLE_ANSWERS });
-    setRevenue("2500000000");
     toast.success("Ejemplo precargado para pruebas");
   };
 
   const domainProgress = (domainId: string) => {
-    const items = DOMAINS.find((d) => d.id === domainId)!.items;
+    const domain = DOMAINS.find((d) => d.id === domainId);
+    if (!domain) return 0;
+    const items = domain.items;
     const ok = items.filter((i) => answers[i.id] === "CUMPLE").length;
     return (ok / items.length) * 100;
   };
@@ -165,14 +157,14 @@ function Index() {
               <ShieldCheck className="h-5 w-5" />
             </span>
             <div className="leading-tight">
-              <p className="text-sm font-bold tracking-tight">MD Solutions Security</p>
+              <p className="text-sm font-bold tracking-tight">M:D Pre Auditoría</p>
               <p className="text-[11px] text-muted-foreground">
-                Ciberseguridad &amp; Cumplimiento Normativo
+                ISO 27001 &amp; Ley 21.663
               </p>
             </div>
           </div>
           <span className="hidden rounded-full border border-accent/40 bg-accent/10 px-3 py-1 text-[11px] font-medium text-accent md:inline">
-            Auditoría ANCI &amp; Ley 21.719
+            Pre auditoría ANCI
           </span>
           <nav className="ml-auto hidden items-center gap-1 text-sm text-muted-foreground lg:flex">
             {[
@@ -203,17 +195,15 @@ function Index() {
         <div className="grid-lines absolute inset-0 opacity-20" aria-hidden />
         <div className="relative mx-auto max-w-5xl px-4 py-20 text-center sm:px-6">
           <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-            <Activity className="h-3.5 w-3.5" /> Ley 21.663 · Ley 21.719 · ANCI
+            <Activity className="h-3.5 w-3.5" /> ISO/IEC 27001:2022 · Ley 21.663 · ANCI
           </span>
           <h1 className="mt-6 text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
-            Diagnóstico de Cumplimiento Regulatorio y{" "}
-            <span className="text-neon">Calculadora de Riesgo Sancionatorio</span> ANCI /
-            Ley 21.719
+            <span className="text-neon">Pre Auditoría</span> de Ciberseguridad
           </h1>
           <p className="mx-auto mt-5 max-w-3xl text-base text-muted-foreground sm:text-lg">
             Evalúe el nivel de madurez de su organización, identifique brechas críticas y
-            calcule su exposición a multas según su clasificación (OIV, Servicios
-            Esenciales o Régimen General).
+            evalúe controles ISO/IEC 27001:2022 y revise su exposición bajo la Ley
+            21.663 según su clasificación como OIV o Prestador de Servicios Esenciales.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Button size="lg" asChild>
@@ -280,41 +270,19 @@ function Index() {
                     {ENTITIES[key].description}
                   </p>
                   <p className="mt-3 text-xs text-accent">
-                    Tope: {ENTITIES[key].capPercent}% de ventas anuales
+                    {key === "OIV" ? "Topes ANCI reforzados" : key === "SE" ? "Topes ANCI generales" : "Sin sanción ANCI estimada"}
                   </p>
                 </button>
               );
             })}
           </div>
 
-          <div className="glass-panel mt-6 grid gap-6 rounded-xl p-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="revenue">Ingresos anuales (CLP) — opcional</Label>
-              <Input
-                id="revenue"
-                inputMode="numeric"
-                placeholder="Ej: 2.500.000.000"
-                value={revenue ? num(Number(revenue.replace(/\D/g, ""))) : ""}
-                onChange={(e) => setRevenue(e.target.value.replace(/\D/g, ""))}
-              />
-              <p className="text-xs text-muted-foreground">
-                Permite calcular el tope porcentual de la sanción (hasta{" "}
-                {ENTITIES[entity].capPercent}%, duplicado en reincidencia).
-              </p>
-            </div>
-            <div className="flex items-start justify-between gap-4 rounded-lg border border-border/60 bg-secondary/40 p-4">
-              <div>
-                <p className="text-sm font-medium">Reincidencia declarada</p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Duplica los topes de multa y el porcentaje sobre ventas.
-                </p>
-              </div>
-              <Switch
-                checked={repeat}
-                onCheckedChange={setRepeat}
-                aria-label="Reincidencia"
-              />
-            </div>
+          <div className="glass-panel mt-6 rounded-xl p-5">
+            <p className="text-sm font-medium">Base de la evaluación</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              ISO/IEC 27001:2022 (cláusulas 4–10 y Anexo A) y obligaciones de prevención,
+              reporte, resolución y continuidad de la Ley 21.663.
+            </p>
           </div>
         </section>
 
@@ -330,7 +298,7 @@ function Index() {
             <div className="space-y-4">
               <Accordion
                 type="multiple"
-                defaultValue={[DOMAINS[0].id]}
+                defaultValue={DOMAINS[0] ? [DOMAINS[0].id] : []}
                 className="space-y-4"
               >
                 {DOMAINS.map((domain) => (
@@ -461,16 +429,11 @@ function Index() {
                   <p className="text-lg font-semibold tabular-nums text-muted-foreground">
                     {clp(assessment.fineCLP)}
                   </p>
-                  {assessment.cappedByRevenue && (
-                    <p className="mt-2 text-xs text-warning">
-                      Monto limitado por el tope de {ENTITIES[entity].capPercent}
-                      {repeat ? "% x2" : "%"} de ventas anuales.
-                    </p>
-                  )}
                   <ul className="mt-3 space-y-1 text-[11px] text-muted-foreground">
-                    <li>Leves: hasta 5.000 UTM</li>
-                    <li>Graves: hasta 10.000 UTM / 2% ventas</li>
-                    <li>Gravísimas / OIV: 20.000 – 40.000 UTM / 4% ventas</li>
+                    <li>Leves: hasta 5.000 UTM · OIV hasta 10.000 UTM</li>
+                    <li>Graves: hasta 10.000 UTM · OIV hasta 20.000 UTM</li>
+                    <li>Gravísimas: hasta 20.000 UTM · OIV hasta 40.000 UTM</li>
+                    <li>La ley no fija un mínimo expreso; la ANCI gradúa cada sanción.</li>
                   </ul>
                 </div>
 
@@ -485,7 +448,7 @@ function Index() {
         {/* Servicios */}
         <section id="servicios" className="border-t border-border/60 py-16">
           <SectionTitle
-            eyebrow="MD Solutions Security"
+            eyebrow="M:D Pre Auditoría"
             title="Servicios de asesoría"
             subtitle="Acompañamiento experto para cerrar brechas y sostener el cumplimiento en el tiempo."
           />
@@ -518,7 +481,7 @@ function Index() {
               onSubmit={(e) => {
                 e.preventDefault();
                 toast.success("Solicitud enviada", {
-                  description: "Un consultor de MD Solutions Security le contactará.",
+                  description: "Un consultor de M:D le contactará.",
                 });
               }}
             >
@@ -555,19 +518,11 @@ function Index() {
             </form>
 
             <div className="glass-panel space-y-4 rounded-xl p-6">
-              <p className="font-semibold">MD Solutions Security</p>
+              <p className="font-semibold">M:D Pre Auditoría</p>
               <p className="text-sm text-muted-foreground">
                 Consultoría en ciberseguridad y cumplimiento normativo chileno.
               </p>
               <ul className="space-y-3 text-sm">
-                <li className="flex items-center gap-2">
-                  <Mail className="h-4 w-4 text-primary" />
-                  contacto@mdsolutionssecurity.cl
-                </li>
-                <li className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-primary" />
-                  +56 2 2345 6789
-                </li>
                 <li className="flex items-center gap-2">
                   <MapPin className="h-4 w-4 text-primary" />
                   Santiago, Chile — atención remota y presencial
@@ -580,13 +535,13 @@ function Index() {
 
       <footer className="border-t border-border/60 bg-secondary/20 py-8">
         <div className="mx-auto max-w-7xl space-y-3 px-4 text-center text-xs text-muted-foreground sm:px-6">
-          <p className="font-semibold text-foreground">MD Solutions Security</p>
+          <p className="font-semibold text-foreground">M:D Pre Auditoría</p>
           <p>
             Herramienta de autodiagnóstico referencial basada en la normativa chilena
             vigente supervisada por la ANCI. No constituye asesoría legal ni certificación
             de cumplimiento.
           </p>
-          <p>© {new Date().getFullYear()} MD Solutions Security. Todos los derechos reservados.</p>
+          <p>© {new Date().getFullYear()} M:D. Todos los derechos reservados.</p>
         </div>
       </footer>
 
@@ -605,8 +560,6 @@ function Index() {
           </div>
           <p className="text-sm text-muted-foreground">
             Monto potencial en pesos: <strong>{clp(assessment.fineCLP)}</strong>
-            {assessment.revenueCapCLP !== null &&
-              ` · Tope por ventas: ${clp(assessment.revenueCapCLP)}`}
           </p>
           <div className="space-y-2">
             {assessment.gaps.length === 0 ? (
