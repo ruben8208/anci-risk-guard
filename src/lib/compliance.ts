@@ -7,7 +7,7 @@ export interface ChecklistItem {
   title: string;
   detail: string;
   severity: Severity;
-  reference: string;
+  reference?: string;
 }
 
 export interface Domain {
@@ -50,7 +50,7 @@ export const SEVERITY_LABEL: Record<Severity, string> = {
 /** Topes referenciales en UTM por severidad y clasificación del sujeto obligado. */
 export const FINE_MATRIX: Record<EntityType, Record<Severity, number>> = {
   OIV: { LEVE: 5000, GRAVE: 10000, GRAVISIMA: 40000 },
-  SE: { LEVE: 3000, GRAVE: 10000, GRAVISIMA: 20000 },
+  SE: { LEVE: 5000, GRAVE: 10000, GRAVISIMA: 20000 },
   GENERAL: { LEVE: 0, GRAVE: 0, GRAVISIMA: 0 },
 };
 
@@ -270,8 +270,8 @@ export function computeAssessment(
   answers: Record<string, Status>,
   entity: EntityType,
   utmValue: number,
-  annualRevenueCLP: number | null,
-  repeatOffender: boolean,
+  _annualRevenueCLP: number | null,
+  _repeatOffender: boolean,
 ): Assessment {
   let weighted = 0;
   let weightTotal = 0;
@@ -306,17 +306,12 @@ export function computeAssessment(
     ),
     0,
   );
-  fineUTM = Math.min(fineUTM, severityCap) * (repeatOffender ? 2 : 1);
+  fineUTM = Math.min(fineUTM, severityCap);
   fineUTM = Math.round(fineUTM);
 
   let fineCLP = fineUTM * utmValue;
-  const capPercent = ENTITIES[entity].capPercent * (repeatOffender ? 2 : 1);
-  const revenueCapCLP = annualRevenueCLP ? (annualRevenueCLP * capPercent) / 100 : null;
-  let cappedByRevenue = false;
-  if (revenueCapCLP !== null && revenueCapCLP < fineCLP) {
-    fineCLP = revenueCapCLP;
-    cappedByRevenue = true;
-  }
+  const revenueCapCLP = null;
+  const cappedByRevenue = false;
 
   const compliancePercent = weightTotal ? (weighted / weightTotal) * 100 : 0;
   const level =
