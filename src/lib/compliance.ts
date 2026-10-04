@@ -7,6 +7,7 @@ export interface ChecklistItem {
   title: string;
   detail: string;
   severity: Severity;
+  reference: string;
 }
 
 export interface Domain {
@@ -18,28 +19,25 @@ export interface Domain {
 
 export const ENTITIES: Record<
   EntityType,
-  { label: string; short: string; description: string; capPercent: number }
+  { label: string; short: string; description: string }
 > = {
   OIV: {
     label: "Operador de Importancia Vital (OIV)",
     short: "OIV",
     description:
-      "Nivel de exigencia crítico: deberes reforzados de SGSI, reporte continuo y las multas más severas del marco ANCI.",
-    capPercent: 4,
+      "Proveedor calificado formalmente por la ANCI, sujeto a obligaciones reforzadas y sanciones duplicadas.",
   },
   SE: {
     label: "Prestador de Servicios Esenciales (SE)",
     short: "Servicios Esenciales",
     description:
-      "Obligaciones prioritarias de notificación temprana, continuidad operacional y gestión de incidentes significativos.",
-    capPercent: 2,
+      "Institución del catálogo legal, obligada a prevenir, resolver y reportar incidentes significativos.",
   },
   GENERAL: {
-    label: "Entidad General / Común",
-    short: "Régimen General",
+    label: "Evaluación ISO/IEC 27001",
+    short: "Solo ISO 27001",
     description:
-      "Sujeto obligado bajo régimen estándar de la Ley 21.719, con deberes de tratamiento lícito y seguridad de datos.",
-    capPercent: 2,
+      "Diagnóstico voluntario del SGSI para organizaciones no calificadas como SE u OIV; sin cálculo sancionatorio ANCI.",
   },
 };
 
@@ -53,7 +51,7 @@ export const SEVERITY_LABEL: Record<Severity, string> = {
 export const FINE_MATRIX: Record<EntityType, Record<Severity, number>> = {
   OIV: { LEVE: 5000, GRAVE: 10000, GRAVISIMA: 40000 },
   SE: { LEVE: 3000, GRAVE: 10000, GRAVISIMA: 20000 },
-  GENERAL: { LEVE: 2000, GRAVE: 5000, GRAVISIMA: 10000 },
+  GENERAL: { LEVE: 0, GRAVE: 0, GRAVISIMA: 0 },
 };
 
 export const SEVERITY_WEIGHT: Record<Severity, number> = {
