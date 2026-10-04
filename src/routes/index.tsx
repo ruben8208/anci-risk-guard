@@ -298,7 +298,7 @@ function Index() {
             <div className="space-y-4">
               <Accordion
                 type="multiple"
-                defaultValue={[DOMAINS[0].id]}
+                defaultValue={DOMAINS[0] ? [DOMAINS[0].id] : []}
                 className="space-y-4"
               >
                 {DOMAINS.map((domain) => (
@@ -560,8 +560,6 @@ function Index() {
           </div>
           <p className="text-sm text-muted-foreground">
             Monto potencial en pesos: <strong>{clp(assessment.fineCLP)}</strong>
-            {assessment.revenueCapCLP !== null &&
-              ` · Tope por ventas: ${clp(assessment.revenueCapCLP)}`}
           </p>
           <div className="space-y-2">
             {assessment.gaps.length === 0 ? (
