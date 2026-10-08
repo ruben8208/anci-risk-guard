@@ -430,11 +430,19 @@ function Index() {
                     {clp(assessment.fineCLP)}
                   </p>
                   <ul className="mt-3 space-y-1 text-[11px] text-muted-foreground">
-                    <li>Leves: hasta 5.000 UTM · OIV hasta 10.000 UTM</li>
-                    <li>Graves: hasta 10.000 UTM · OIV hasta 20.000 UTM</li>
-                    <li>Gravísimas: hasta 20.000 UTM · OIV hasta 40.000 UTM</li>
+                    <li>Leves: 0–5.000 UTM · OIV 0–10.000 UTM</li>
+                    <li>Graves: 0–10.000 UTM · OIV 0–20.000 UTM</li>
+                    <li>Gravísimas: 0–20.000 UTM · OIV 0–40.000 UTM</li>
                     <li>La ley no fija un mínimo expreso; la ANCI gradúa cada sanción.</li>
                   </ul>
+                  <a
+                    href="https://www.bcn.cl/leychile/navegar?idNorma=1202434"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-3 inline-block text-[11px] font-medium text-accent hover:underline"
+                  >
+                    Fuente oficial: Ley 21.663, artículo 40
+                  </a>
                 </div>
 
                 <Button className="w-full" onClick={() => setReportOpen(true)}>
